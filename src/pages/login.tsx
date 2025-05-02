@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
+import { useCookies } from "react-cookie";
 
 const Login = () => {
   const loginFormSchema = z.object({
@@ -27,10 +28,10 @@ const Login = () => {
     },
   });
 
+  const [_, setCookie] = useCookies();
   const onSubmit = async () => {
     try {
-      const formValues = form.getValues()
-
+      const formValues = form.getValues();
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,11 +41,16 @@ const Login = () => {
         }),
       });
 
-      const data = await res.json()
-      console.log(data)
-
+      const data = await res.json();
+      if (res.status !== 200 && data?.error_message !== "") {
+        toast("Invalid email or password");
+        console.error(data?.error_message);
+      } else {
+        setCookie("jwt_token", data?.jwt_token);
+        setCookie("refresh_token", data?.refresh_token);
+      }
     } catch (e) {
-      toast("Invalid email or password...")
+      toast("Something went wrong...");
       console.error(e);
     }
   };
