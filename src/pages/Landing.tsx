@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router";
-import { Button } from "../../components/ui/button";
+import { Button } from "../components/ui/button";
 
 const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-self-center items-center mt-5">
-      <h2 className="text-white mb-5">Welcome to Taskin</h2>
+    <div className="flex flex-col justify-self-center items-center mt-10">
+      <h1 className="text-white mb-5">Welcome to Taskin</h1>
       <div>
         <Button
           className="mr-1"
