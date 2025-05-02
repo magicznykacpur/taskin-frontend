@@ -1,13 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Breadcrumbs from "../components/breadcrumbs";
 import { Button } from "../components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 
@@ -29,6 +30,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col items-center">
+      <Breadcrumbs links={{"/": "Home", "/login": "Login"}}/>
       <h1 className="text-white mt-10 mb-5">Log in to Taskin</h1>
       <Form {...form}>
         <form

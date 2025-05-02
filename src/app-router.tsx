@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
+import Landing from "./pages/landing";
+import Login from "./pages/login";
 
 const AppRouter = () => {
   return (
