@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import Breadcrumbs from "../components/breadcrumbs";
 import { Button } from "../components/ui/button";
@@ -26,11 +27,31 @@ const Login = () => {
     },
   });
 
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    try {
+      const formValues = form.getValues()
+
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formValues.email,
+          password: formValues.password,
+        }),
+      });
+
+      const data = await res.json()
+      console.log(data)
+
+    } catch (e) {
+      toast("Invalid email or password...")
+      console.error(e);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
-      <Breadcrumbs links={{"/": "Home", "/login": "Login"}}/>
+      <Breadcrumbs links={{ "/": "Home", "/login": "Login" }} />
       <h1 className="text-white mt-10 mb-5">Log in to Taskin</h1>
       <Form {...form}>
         <form
@@ -55,7 +76,7 @@ const Login = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="password" {...field} />
+                  <Input placeholder="password" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
