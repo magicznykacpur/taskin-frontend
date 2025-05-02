@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
+import { toast } from "sonner";
 
 const Signup = () => {
   const signupFormSchema = z.object({
@@ -30,7 +31,36 @@ const Signup = () => {
     },
   });
 
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    try {
+      const formValues = form.getValues();
+
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formValues.email,
+          username: formValues.username,
+          password: formValues.password,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.status === 201) {
+        toast("Account created! You can now login...");
+      } else if (
+        res.status === 400 &&
+        data?.error_message.includes("username")
+      ) {
+        toast("User with that username already exists...");
+      } else if (res.status === 400 && data?.error_message.includes("email")) {
+        toast("User with that email already exists...");
+      }
+    } catch (e) {
+      toast("Something went wrong...");
+      console.error(e);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -71,7 +101,7 @@ const Signup = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="password" {...field} />
+                  <Input placeholder="password" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
