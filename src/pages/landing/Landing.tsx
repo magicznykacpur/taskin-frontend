@@ -1,16 +1,25 @@
 import { useNavigate } from "react-router";
+import { Button } from "../../components/ui/button";
 
 const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <>
-      <h2>Welcome to Taskin</h2>
+    <div className="flex flex-col justify-self-center items-center mt-5">
+      <h2 className="text-white mb-5">Welcome to Taskin</h2>
       <div>
-        <button onClick={() => navigate("/login")}>Log in</button>
-        <button onClick={() => navigate("/signup")}>Sign up</button>
+        <Button
+          className="mr-1"
+          variant="outline"
+          onClick={() => navigate("/login")}
+        >
+          Log in
+        </Button>
+        <Button variant="outline" onClick={() => navigate("/signup")}>
+          Sign up
+        </Button>
       </div>
-    </>
+    </div>
   );
 };
 
