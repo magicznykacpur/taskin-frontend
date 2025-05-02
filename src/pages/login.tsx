@@ -13,6 +13,7 @@ import {
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router";
 
 const Login = () => {
   const loginFormSchema = z.object({
@@ -28,6 +29,7 @@ const Login = () => {
     },
   });
 
+  const navigate = useNavigate();
   const [_, setCookie] = useCookies();
   const onSubmit = async () => {
     try {
@@ -48,6 +50,7 @@ const Login = () => {
       } else {
         setCookie("jwt_token", data?.jwt_token);
         setCookie("refresh_token", data?.refresh_token);
+        navigate("/dashboard");
       }
     } catch (e) {
       toast("Something went wrong...");

@@ -1,9 +1,17 @@
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import Breadcrumbs from "../components/breadcrumbs";
+import { useCookies } from "react-cookie";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [cookie] = useCookies();
+
+  if (
+    cookie["jwt_token"] !== undefined &&
+    cookie["refresh_token"] !== undefined
+  )
+    return <Navigate to="/dashboard" />;
 
   return (
     <div className="flex flex-col justify-self-center items-center mt-10 max-w-md">
