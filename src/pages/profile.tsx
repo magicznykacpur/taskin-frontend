@@ -131,6 +131,9 @@ const Profile = () => {
                   </FormItem>
                 )}
               />
+              <CardDescription>
+                last updated at <strong>{userInfo.updated_at}</strong>
+              </CardDescription>
               <div className="flex justify-end">
                 <Button type="submit">Update</Button>
               </div>
