@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { getUserInfo } from "../api/user";
+import { getUserInfo, logoutUser } from "../api/user";
 import menu from "../assets/menu.svg";
 import { userAtom } from "../atoms/user";
 import { Button } from "../components/ui/button";
@@ -22,10 +22,15 @@ const Dashboard = () => {
   const jwtToken = cookie["jwt_token"];
   const refreshToken = cookie["refresh_token"];
 
-  const logout = () => {
-    removeCookie("jwt_token");
-    removeCookie("refresh_token");
-    navigate("/");
+  const logout = async () => {
+    const status = await logoutUser(jwtToken, refreshToken, () =>
+      toast.error("We couldnt log you out...")
+    );
+    if (status === 200) {
+      removeCookie("jwt_token");
+      removeCookie("refresh_token");
+      navigate("/");
+    }
   };
 
   if (jwtToken === undefined || refreshToken === undefined) {

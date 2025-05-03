@@ -45,3 +45,24 @@ export const updateUserInfo = async (
     onError();
   }
 };
+
+export const logoutUser = async (
+  jwtToken: string,
+  refreshToken: string,
+  onError: () => void
+): Promise<number | void> => {
+  try {
+    const res = await fetch("/api/logout", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        RefreshToken: refreshToken
+      }
+    });
+
+    return res.status
+  } catch (e) {
+    console.error(e);
+    onError();
+  }
+};
