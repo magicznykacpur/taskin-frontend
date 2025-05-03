@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
+import { getUserInfo } from "../api/user";
 import menu from "../assets/menu.svg";
 import { Button } from "../components/ui/button";
 import {
@@ -15,7 +16,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { UserInfo } from "../types";
 
-export const userAtom = atom<UserInfo>();
+export const userAtom = atom<UserInfo | void>();
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -30,26 +31,15 @@ const Dashboard = () => {
   };
 
   if (jwtToken === undefined || refreshToken === undefined) {
-    () => navigate("/")
+    () => navigate("/");
   }
+
   const [user, setUser] = useAtom(userAtom);
-
   const fetchUser = async () => {
-    try {
-      const res = await fetch("/api/me", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          RefreshToken: refreshToken,
-        },
-      });
-
-      const user: UserInfo = await res.json();
-      setUser(user);
-    } catch (e) {
-      console.error(e);
-      toast("Something went wrong while fetching the user...");
-    }
+    const userInfo = await getUserInfo(jwtToken, refreshToken, () =>
+      toast("Something went wrong when fetching the user.")
+    );
+    setUser(userInfo);
   };
 
   useEffect(() => {
