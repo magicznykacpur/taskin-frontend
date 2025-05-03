@@ -3,6 +3,7 @@ import Dashboard from "./pages/dashboard";
 import Landing from "./pages/landing";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
+import Profile from "./pages/profile";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -11,7 +12,7 @@ const AppRouter = () => (
       <Route path="login" element={<Login />} />
       <Route path="signup" element={<Signup />} />
       <Route path="dashboard" element={<Dashboard />}>
-        <Route path="profile" />
+        <Route path="profile" element={<Profile />} />
         <Route path="tasks" />
       </Route>
     </Routes>
