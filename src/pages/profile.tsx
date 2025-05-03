@@ -7,22 +7,22 @@ import { z } from "zod";
 import { updateUserInfo } from "../api/user";
 import { Button } from "../components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "../components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
-import { userAtom } from "./dashboard";
+import { userAtom } from "../atoms/user";
 
 const Profile = () => {
   const [cookie] = useCookies();
@@ -68,9 +68,11 @@ const Profile = () => {
       { email, username, password },
       () => toast.error("Something went wrong when updating your profile.")
     );
-    setUserInfo(userInfo);
 
-    toast.success("Profile updated successfully!")
+    if (userInfo !== undefined) {
+      userInfo && setUserInfo(userInfo);
+      toast.success("Profile updated successfully!");
+    }
   };
 
   return (

@@ -1,11 +1,12 @@
-import { } from "@radix-ui/react-dropdown-menu";
-import { atom, useAtom } from "jotai";
+import {} from "@radix-ui/react-dropdown-menu";
+import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUserInfo } from "../api/user";
 import menu from "../assets/menu.svg";
+import { userAtom } from "../atoms/user";
 import { Button } from "../components/ui/button";
 import {
   DropdownMenu,
@@ -14,9 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import { UserInfo } from "../types";
-
-export const userAtom = atom<UserInfo | void>();
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -39,7 +37,8 @@ const Dashboard = () => {
     const userInfo = await getUserInfo(jwtToken, refreshToken, () =>
       toast.error("Something went wrong when fetching the user.")
     );
-    setUser(userInfo);
+
+    userInfo && setUser(userInfo);
   };
 
   useEffect(() => {
@@ -59,15 +58,25 @@ const Dashboard = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem className="justify-center" onClick={() => navigate("/dashboard/profile")}>
+              <DropdownMenuItem
+                className="justify-center"
+                onClick={() => navigate("/dashboard/profile")}
+              >
                 Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="justify-center" onClick={() => navigate("/dashboard/tasks")}>
+              <DropdownMenuItem
+                className="justify-center"
+                onClick={() => navigate("/dashboard/tasks")}
+              >
                 Tasks
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" className="justify-center" onClick={() => logout()}>
+              <DropdownMenuItem
+                variant="destructive"
+                className="justify-center"
+                onClick={() => logout()}
+              >
                 Logout
               </DropdownMenuItem>
               <DropdownMenuSeparator />
