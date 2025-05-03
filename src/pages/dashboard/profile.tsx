@@ -4,15 +4,15 @@ import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { updateUserInfo } from "../api/user";
-import { Button } from "../components/ui/button";
+import { updateUserInfo } from "../../api/user";
+import { Button } from "../../components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "../../components/ui/card";
 import {
   Form,
   FormControl,
@@ -20,9 +20,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../components/ui/form";
-import { Input } from "../components/ui/input";
-import { userAtom } from "../atoms/user";
+} from "../../components/ui/form";
+import { Input } from "../../components/ui/input";
+import { userAtom } from "../../atoms/user";
 
 const Profile = () => {
   const [cookie] = useCookies();

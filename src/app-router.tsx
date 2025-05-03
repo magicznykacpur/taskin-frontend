@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/dashboard/dashboard";
 import Landing from "./pages/landing";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
-import Profile from "./pages/profile";
+import Profile from "./pages/dashboard/profile";
 
 const AppRouter = () => (
   <BrowserRouter>
