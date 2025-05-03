@@ -59,15 +59,15 @@ const Dashboard = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => navigate("/dashboard/profile")}>
+              <DropdownMenuItem className="justify-center" onClick={() => navigate("/dashboard/profile")}>
                 Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate("/dashboard/tasks")}>
+              <DropdownMenuItem className="justify-center" onClick={() => navigate("/dashboard/tasks")}>
                 Tasks
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => logout()}>
+              <DropdownMenuItem variant="destructive" className="justify-center" onClick={() => logout()}>
                 Logout
               </DropdownMenuItem>
               <DropdownMenuSeparator />

@@ -1,28 +1,26 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle
 } from "../components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { userAtom } from "./dashboard";
-import { useAtom } from "jotai";
-import { toast } from "sonner";
-import { Label } from "../components/ui/label";
 
 const Profile = () => {
   const updateProfileFormSchema = z.object({
