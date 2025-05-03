@@ -1,4 +1,4 @@
-import { UserInfo } from "../types";
+import { UserInfo, UserInfoReq } from "../types";
 
 export const getUserInfo = async (
   jwtToken: string,
@@ -20,12 +20,6 @@ export const getUserInfo = async (
     console.error(e);
     onError();
   }
-};
-
-type UserInfoReq = {
-  email?: string;
-  username?: string;
-  password?: string;
 };
 
 export const updateUserInfo = async (
