@@ -2,7 +2,7 @@ import {} from "@radix-ui/react-dropdown-menu";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Outlet, useNavigate } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUserInfo } from "../api/user";
 import menu from "../assets/menu.svg";
@@ -48,7 +48,9 @@ const Dashboard = () => {
   return (
     <>
       <header className="sticky flex justify-between items-center p-4 text-white border-b-2 border-b-gray-600">
-        <strong>taskin</strong>
+        <NavLink to="/dashboard/tasks">
+          <strong>taskin</strong>
+        </NavLink>
         <div className="flex items-center space-x-4">
           <strong>{user?.username}</strong>
           <DropdownMenu>
