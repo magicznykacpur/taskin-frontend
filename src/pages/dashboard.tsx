@@ -15,7 +15,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { UserInfo } from "../types";
 
-const userAtom = atom<UserInfo>();
+export const userAtom = atom<UserInfo>();
 
 const Dashboard = () => {
   const navigate = useNavigate();

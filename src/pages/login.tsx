@@ -33,13 +33,13 @@ const Login = () => {
   const [_, setCookie] = useCookies();
   const onSubmit = async () => {
     try {
-      const formValues = form.getValues();
+      const { email, password } = form.getValues();
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: formValues.email,
-          password: formValues.password,
+          email: email,
+          password: password,
         }),
       });
 
@@ -50,7 +50,7 @@ const Login = () => {
       } else {
         setCookie("jwt_token", data?.jwt_token);
         setCookie("refresh_token", data?.refresh_token);
-        navigate("/dashboard");
+        navigate("/dashboard/tasks");
       }
     } catch (e) {
       toast("Something went wrong...");
