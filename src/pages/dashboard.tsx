@@ -1,28 +1,37 @@
+import { } from "@radix-ui/react-dropdown-menu";
 import { atom, useAtom } from "jotai";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Navigate } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { UserInfo } from "../types";
+import menu from "../assets/menu.svg";
+import { Button } from "../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "../components/ui/dropdown-menu";
+import { UserInfo } from "../types";
 
 const userAtom = atom<UserInfo>();
 
 const Dashboard = () => {
-  const [cookie] = useCookies();
+  const navigate = useNavigate();
+  const [cookie, _, removeCookie] = useCookies();
   const jwtToken = cookie["jwt_token"];
   const refreshToken = cookie["refresh_token"];
 
-  if (jwtToken === undefined || refreshToken === undefined)
-    return <Navigate to="/" />;
+  const logout = () => {
+    removeCookie("jwt_token");
+    removeCookie("refresh_token");
+    navigate("/");
+  };
 
+  if (jwtToken === undefined || refreshToken === undefined) {
+    () => navigate("/")
+  }
   const [user, setUser] = useAtom(userAtom);
 
   const fetchUser = async () => {
@@ -48,25 +57,36 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div>
-      <header className="sticky flex justify-between p-4 text-white border-b-2 border-b-gray-600">
+    <>
+      <header className="sticky flex justify-between items-center p-4 text-white border-b-2 border-b-gray-600">
         <strong>taskin</strong>
-        <div className="flex space-x-4">
+        <div className="flex items-center space-x-4">
           <strong>{user?.username}</strong>
           <DropdownMenu>
-            <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="sm">
+                <img src={menu} />
+              </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => navigate("/dashboard/profile")}>
+                Profile
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuItem>Team</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/dashboard/tasks")}>
+                Tasks
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </header>
-    </div>
+      <Outlet />
+    </>
   );
 };
 

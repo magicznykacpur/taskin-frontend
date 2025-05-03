@@ -1,7 +1,7 @@
-import { Navigate, useNavigate } from "react-router";
-import { Button } from "../components/ui/button";
-import Breadcrumbs from "../components/breadcrumbs";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router";
+import Breadcrumbs from "../components/breadcrumbs";
+import { Button } from "../components/ui/button";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Landing = () => {
     cookie["jwt_token"] !== undefined &&
     cookie["refresh_token"] !== undefined
   )
-    return <Navigate to="/dashboard" />;
+    () => navigate("/dashboard");
 
   return (
     <div className="flex flex-col justify-self-center items-center mt-10 max-w-md">
