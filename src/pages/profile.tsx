@@ -1,35 +1,48 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom } from "jotai";
+import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { updateUserInfo } from "../api/user";
 import { Button } from "../components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "../components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
+import { UserInfo } from "../types";
 import { userAtom } from "./dashboard";
 
 const Profile = () => {
+  const [cookie] = useCookies();
+  const [userInfo, setUserInfo] = useAtom(userAtom);
+  const jwtToken = cookie["jwt_token"];
+  const refreshToken = cookie["refresh_token"];
+
   const updateProfileFormSchema = z.object({
     email: z.string().email("This is not a valid email.").or(z.undefined()),
-    username: z.string().min(4, "This field must have at least 4 characters.").or(z.undefined()),
-    password: z.string().min(1, "This field cannot be empty.").or(z.undefined()),
+    username: z
+      .string()
+      .min(4, "This field must have at least 4 characters.")
+      .or(z.undefined()),
+    password: z
+      .string()
+      .min(1, "This field cannot be empty.")
+      .or(z.undefined()),
   });
 
-  const [userInfo] = useAtom(userAtom)
   const form = useForm<z.infer<typeof updateProfileFormSchema>>({
     resolver: zodResolver(updateProfileFormSchema),
     defaultValues: {
@@ -37,14 +50,27 @@ const Profile = () => {
       username: undefined,
       password: undefined,
     },
-    
   });
 
-  const onSubmit = () => {
-    const {email, username, password} = form.getValues()
-    if (email === undefined && username === undefined && password === undefined) {
-        toast("You must pass at least one value to update.")
+  const onSubmit = async () => {
+    const { email, username, password } = form.getValues();
+    if (
+      email === undefined &&
+      username === undefined &&
+      password === undefined
+    ) {
+      toast("You must pass at least one value to update.");
     }
+
+    const userInfo = await updateUserInfo(
+      jwtToken,
+      refreshToken,
+      { email, username, password },
+      () => toast("Something went wrong when updating your profile.")
+    );
+    setUserInfo(userInfo);
+
+    toast.success("Profile updated successfully!")
   };
 
   return (
