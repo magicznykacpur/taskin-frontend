@@ -58,14 +58,15 @@ const Profile = () => {
       username === undefined &&
       password === undefined
     ) {
-      toast("You must pass at least one value to update.");
+      toast.warning("You must pass at least one value to update.");
+      return;
     }
 
     const userInfo = await updateUserInfo(
       jwtToken,
       refreshToken,
       { email, username, password },
-      () => toast("Something went wrong when updating your profile.")
+      () => toast.error("Something went wrong when updating your profile.")
     );
     setUserInfo(userInfo);
 

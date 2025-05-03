@@ -53,17 +53,17 @@ const Signup = () => {
 
       const data = await res.json();
       if (res.status === 201) {
-        toast("Account created! You can now login...");
+        toast.success("Account created! You can now login.");
       } else if (
         res.status === 400 &&
         data?.error_message.includes("username")
       ) {
-        toast("User with that username already exists...");
+        toast.warning("User with that username already exists...");
       } else if (res.status === 400 && data?.error_message.includes("email")) {
-        toast("User with that email already exists...");
+        toast.warning("User with that email already exists...");
       }
     } catch (e) {
-      toast("Something went wrong...");
+      toast.error("Something went wrong...");
       console.error(e);
     }
   };

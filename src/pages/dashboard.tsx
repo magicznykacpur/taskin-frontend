@@ -37,7 +37,7 @@ const Dashboard = () => {
   const [user, setUser] = useAtom(userAtom);
   const fetchUser = async () => {
     const userInfo = await getUserInfo(jwtToken, refreshToken, () =>
-      toast("Something went wrong when fetching the user.")
+      toast.error("Something went wrong when fetching the user.")
     );
     setUser(userInfo);
   };
