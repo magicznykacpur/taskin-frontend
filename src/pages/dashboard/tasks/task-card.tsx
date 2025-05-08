@@ -8,21 +8,76 @@ import {
 } from "../../../components/ui/card";
 import { Task } from "../../../types";
 import { formatDate } from "date-fns";
+import useTokens from "../../../hooks/useTokens";
+import { deleteTask } from "../../../api/tasks";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../../components/ui/popover";
+import { Button } from "../../../components/ui/button";
+import useOnClickOustide from "../../../hooks/useOnClickOutside";
+
+type DeleteTaskStatus = "idle" | "deleting" | "success" | "error";
 
 const TaskCard = ({ id, title, description, due_until }: Task) => {
+  const [deleteStatus, setDeleteStatus] = useState<DeleteTaskStatus>("idle");
+  
+  const [deletePopoverOpen, setDeletePopoverOpen] = useState<boolean>(false);
+  const popoverRef = useRef(null);
+  useOnClickOustide(popoverRef, () => setDeletePopoverOpen(false))
+  
+  const [jwtToken, refreshToken] = useTokens();
   const formattedDate = formatDate(due_until, "dd-MM-yyyy");
+
+  const submitDeleteTask = async () => {
+    const status = await deleteTask(jwtToken, refreshToken, id, () => {
+      setDeleteStatus("error");
+      toast.error("Something went wrong while deleting your task...");
+    });
+
+    if (status !== undefined) {
+      setDeleteStatus("success");
+      toast.success("Task deleted!");
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {title}
-          <X
-            color="#F8A1AD"
-            size={24}
-            strokeWidth="4px"
-            className="cursor-pointer"
-          />
+          <Popover open={deletePopoverOpen}>
+            <PopoverTrigger asChild>
+              <X
+                onClick={() => setDeletePopoverOpen(true)}
+                color="#F8A1AD"
+                size={24}
+                strokeWidth="4px"
+                className="cursor-pointer"
+              />
+            </PopoverTrigger>
+            <PopoverContent ref={popoverRef} className="bg-rose-100 py-10">
+              <div className="space-y-6">
+                <CardHeader>
+                  <CardTitle>Deleting task {title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  Are you sure you want to delete this task?
+                </CardContent>
+                <CardFooter className="flex justify-end">
+                  <Button onClick={() => setDeletePopoverOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="destructive" className="ml-3">
+                    Delete
+                  </Button>
+                </CardFooter>
+              </div>
+            </PopoverContent>
+          </Popover>
         </CardTitle>
       </CardHeader>
       <CardContent className="min-h-30">{description}</CardContent>

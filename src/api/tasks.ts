@@ -49,3 +49,29 @@ export const postTask = async (
     onError();
   }
 };
+
+export const deleteTask = async (
+  jwtToken: string,
+  refreshToken: string,
+  taskId: string,
+  onError: () => void
+): Promise<number | void> => {
+  try {
+    const res = await fetch(`/api/tasks/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        RefreshToken: refreshToken,
+      },
+    });
+
+    if (res.status === 200) {
+      return res.status
+    } else {
+      onError()
+    }
+  } catch (e) {
+    console.error(e);
+    onError();
+  }
+};
