@@ -6,27 +6,30 @@ import { tasksAtom } from "../../../atoms/tasks";
 import useTokens from "../../../hooks/useTokens";
 import { Skeleton } from "../../../components/ui/skeleton";
 import TaskCard from "./task-card";
+import { Button } from "../../../components/ui/button";
+import { useNavigate } from "react-router";
 
-type FetchingTasksState = "fetching" | "success" | "error";
+type FetchingTasksStatus = "fetching" | "success" | "error";
 
 const skeletonList = Array.from(Array(20).keys());
 
 const Tasks = () => {
-  const [fetchingTasksState, setFetchingTasksState] =
-    useState<FetchingTasksState>("fetching");
+  const navigate = useNavigate();
+  const [fetchingTasksStatus, setFetchingTasksStatus] =
+    useState<FetchingTasksStatus>("fetching");
   const [tasks, setTasks] = useAtom(tasksAtom);
   const [jwtToken, refreshToken] = useTokens();
 
   const fetchTasks = async () => {
-    setFetchingTasksState("fetching");
+    setFetchingTasksStatus("fetching");
 
     const data = await getTasks(jwtToken, refreshToken, () => {
-      setFetchingTasksState("error");
+      setFetchingTasksStatus("error");
       toast.error("Couldnt fetch your tasks.");
     });
 
     if (data != undefined) {
-      setFetchingTasksState("success");
+      setFetchingTasksStatus("success");
       setTasks(data);
     }
   };
@@ -37,26 +40,37 @@ const Tasks = () => {
 
   return (
     <>
-      {fetchingTasksState == "fetching" && (
-        <div className="grid p-10 lg:grid-cols-6 lg:gap-10 md:grid-cols-3 md:gap-10 sm:grid-cols-2">
+      {fetchingTasksStatus === "fetching" && (
+        <div className="grid p-10 gap-5 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1">
           {skeletonList.map((key) => (
             <Skeleton
               key={key}
-              className="bg-gray-300 h-[272px] w-[267px] rounded-md"
+              className="bg-white h-[272px] w-[267px] rounded-md"
             />
           ))}
         </div>
       )}
 
-      {fetchingTasksState == "success" && (
-        <div className="grid p-10 lg:grid-cols-6 lg:gap-10 md:grid-cols-3 md:gap-10 sm:grid-cols-2">
-          {tasks.map((task) => (
-            <TaskCard key={task.id} {...task} />
-          ))}
+      {fetchingTasksStatus === "success" && (
+        <div className="grid p-10 gap-5 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1">
+          {tasks.length === 0 ? (
+            <div className="flex items-center absolute my-5 text-2xl text-white">
+              <span>You don't have any tasks yet... </span>
+              <Button
+                className="text-black ml-5"
+                variant="outline"
+                onClick={() => navigate("/dashboard/new-task")}
+              >
+                Add some!
+              </Button>
+            </div>
+          ) : (
+            tasks.map((task) => <TaskCard key={task.id} {...task} />)
+          )}
         </div>
       )}
 
-      {fetchingTasksState === "error" && (
+      {fetchingTasksStatus === "error" && (
         <div className="flex justify-center my-10 text-rose-300">
           Something went wrong while fetching your task, try refreshing the
           page.

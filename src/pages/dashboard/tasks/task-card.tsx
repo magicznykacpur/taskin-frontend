@@ -19,47 +19,64 @@ import {
 } from "../../../components/ui/popover";
 import { Button } from "../../../components/ui/button";
 import useOnClickOustide from "../../../hooks/useOnClickOutside";
+import { useAtom } from "jotai";
+import { tasksAtom } from "../../../atoms/tasks";
 
 type DeleteTaskStatus = "idle" | "deleting" | "success" | "error";
 
 const TaskCard = ({ id, title, description, due_until }: Task) => {
   const [deleteStatus, setDeleteStatus] = useState<DeleteTaskStatus>("idle");
-  
+
   const [deletePopoverOpen, setDeletePopoverOpen] = useState<boolean>(false);
   const popoverRef = useRef(null);
-  useOnClickOustide(popoverRef, () => setDeletePopoverOpen(false))
-  
+  useOnClickOustide(popoverRef, () => setDeletePopoverOpen(false));
+
   const [jwtToken, refreshToken] = useTokens();
   const formattedDate = formatDate(due_until, "dd-MM-yyyy");
 
+  const handleXClick = () => {
+    if (deleteStatus !== "deleting") {
+      setDeletePopoverOpen(true);
+    }
+  };
+
+  const [tasks, setTasks] = useAtom(tasksAtom);
+
   const submitDeleteTask = async () => {
+    setDeletePopoverOpen(false);
+    setDeleteStatus("deleting");
+
     const status = await deleteTask(jwtToken, refreshToken, id, () => {
       setDeleteStatus("error");
       toast.error("Something went wrong while deleting your task...");
     });
 
     if (status !== undefined) {
+      setTasks(tasks.filter((task) => task.id !== id));
+
       setDeleteStatus("success");
       toast.success("Task deleted!");
     }
   };
 
   return (
-    <Card>
+    <Card
+      className={deleteStatus === "deleting" ? "bg-accent animate-pulse" : ""}
+    >
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {title}
           <Popover open={deletePopoverOpen}>
             <PopoverTrigger asChild>
               <X
-                onClick={() => setDeletePopoverOpen(true)}
+                onClick={() => handleXClick()}
                 color="#F8A1AD"
                 size={24}
                 strokeWidth="4px"
                 className="cursor-pointer"
               />
             </PopoverTrigger>
-            <PopoverContent ref={popoverRef} className="bg-rose-100 py-10">
+            <PopoverContent ref={popoverRef} className="bg-rose-50 py-10">
               <div className="space-y-6">
                 <CardHeader>
                   <CardTitle>Deleting task {title}</CardTitle>
@@ -71,7 +88,11 @@ const TaskCard = ({ id, title, description, due_until }: Task) => {
                   <Button onClick={() => setDeletePopoverOpen(false)}>
                     Cancel
                   </Button>
-                  <Button variant="destructive" className="ml-3">
+                  <Button
+                    variant="destructive"
+                    className="ml-3"
+                    onClick={() => submitDeleteTask()}
+                  >
                     Delete
                   </Button>
                 </CardFooter>
@@ -82,7 +103,7 @@ const TaskCard = ({ id, title, description, due_until }: Task) => {
       </CardHeader>
       <CardContent className="min-h-30">{description}</CardContent>
       <CardFooter>
-        <span className="mr-2">Task due until</span>{" "}
+        <span className="mr-2">Task due until</span>
         <strong>{formattedDate}</strong>
       </CardFooter>
     </Card>
