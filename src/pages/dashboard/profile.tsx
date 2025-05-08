@@ -23,8 +23,15 @@ import {
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
 import useTokens from "../../hooks/useTokens";
+import { formatDate } from "date-fns";
+import { useState } from "react";
+import { Label } from "../../components/ui/label";
+
+type ProfileUpdateStatus = "idle" | "updating" | "success" | "error";
 
 const Profile = () => {
+  const [updateStatus, setUpdateStatus] =
+    useState<ProfileUpdateStatus>("idle");
   const [userInfo, setUserInfo] = useAtom(userAtom);
   const [jwtToken, refreshToken] = useTokens();
 
@@ -50,6 +57,7 @@ const Profile = () => {
   });
 
   const onSubmit = async () => {
+    setUpdateStatus("updating");
     const { email, username, password } = form.getValues();
     if (
       email === undefined &&
@@ -64,18 +72,24 @@ const Profile = () => {
       jwtToken,
       refreshToken,
       { email, username, password },
-      () => toast.error("Something went wrong when updating your profile.")
+      () => {
+        setUpdateStatus("error");
+        toast.error("Something went wrong when updating your profile.");
+      }
     );
 
     if (userInfo !== undefined) {
+      setUpdateStatus("success");
       userInfo && setUserInfo(userInfo);
       toast.success("Profile updated successfully!");
     }
   };
 
+  const formattedDate = formatDate(userInfo.updated_at, "dd-MMMM-yyyy kk:mm");
+
   return (
-    <div className="flex justify-center w-full">
-      <Card className="mt-20 w-1/2">
+    <div className="flex flex-col items-center">
+      <Card className="mt-10 w-2/3">
         <CardHeader>
           <CardTitle>Your profile data</CardTitle>
           <CardDescription>update your profile data here</CardDescription>
@@ -130,15 +144,32 @@ const Profile = () => {
                 )}
               />
               <CardDescription>
-                last updated at <strong>{userInfo.updated_at}</strong>
+                last updated at <strong>{formattedDate}</strong>
               </CardDescription>
               <div className="flex justify-end">
-                <Button type="submit">Update</Button>
+                <Button
+                  {...(updateStatus === "updating" && { disabled: true })}
+                  type="submit"
+                >
+                  Update
+                </Button>
               </div>
             </form>
           </Form>
         </CardContent>
       </Card>
+      <div className="w-2/3 mt-10 flex justify-start">
+        {updateStatus == "success" && (
+          <Label className="text-green-200 align-self-start">
+            Profile updated!
+          </Label>
+        )}
+        {updateStatus == "error" && (
+          <Label className="text-rose-300 align-self-start">
+            Something went wrong while updating your profile, please try again.
+          </Label>
+        )}
+      </div>
     </div>
   );
 };

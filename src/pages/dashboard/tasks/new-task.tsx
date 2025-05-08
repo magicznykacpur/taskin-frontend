@@ -35,12 +35,12 @@ import { Label } from "../../../components/ui/label";
 const needAtLeast = (characters: number, field: string) =>
   `Need at least ${characters} characters for the ${field}`;
 
-type CreationState = "waiting_for_input" | "creating" | "success" | "error";
+type CreationStatus = "idle" | "creating" | "success" | "error";
 
 const NewTask = () => {
   const [jwtToken, refreshToken] = useTokens();
-  const [creationState, setCreationState] =
-    useState<CreationState>("waiting_for_input");
+  const [creationStatus, setCreationStatus] =
+    useState<CreationStatus>("idle");
 
   const newTaskFormSchema = z.object({
     due_until: z.date({ required_error: "Due date is required." }),
@@ -62,7 +62,7 @@ const NewTask = () => {
   });
 
   const onSubmit = async () => {
-    setCreationState("creating");
+    setCreationStatus("creating");
 
     try {
       const { due_until, title, description, priority, category } =
@@ -76,16 +76,16 @@ const NewTask = () => {
       };
 
       const task = await postTask(jwtToken, refreshToken, taskBody, () => {
-        setCreationState("error");
+        setCreationStatus("error");
         toast.error("Something went wrong while creating your task...");
       });
 
       if (task != undefined) {
-        setCreationState("success");
+        setCreationStatus("success");
         task && toast.success("Task created successfully!");
       }
     } catch (e) {
-      setCreationState("error");
+      setCreationStatus("error");
       toast.error("Something went wrong...");
       console.error(e);
     }
@@ -207,7 +207,7 @@ const NewTask = () => {
               <div className="flex flex-col items-end justify-end">
                 <Button
                   type="submit"
-                  {...(creationState == "creating" && { disabled: true })}
+                  {...(creationStatus == "creating" && { disabled: true })}
                 >
                   Create
                 </Button>
@@ -217,12 +217,12 @@ const NewTask = () => {
         </CardContent>
       </Card>
       <div className="w-2/3 mt-10 flex justify-start">
-        {creationState == "success" && (
-          <Label className="text-white align-self-start">
+        {creationStatus == "success" && (
+          <Label className="text-green-200 align-self-start">
             Your task was created!
           </Label>
         )}
-        {creationState == "error" && (
+        {creationStatus == "error" && (
           <Label className="text-rose-300 align-self-start">
             Something went wrong while creating your task, please try again.
           </Label>
