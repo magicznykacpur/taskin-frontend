@@ -1,9 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format, formatRFC3339 } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { postTask } from "../../../api/tasks";
 import { Button } from "../../../components/ui/button";
+import { Calendar } from "../../../components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -19,22 +23,24 @@ import {
   FormMessage,
 } from "../../../components/ui/form";
 import { Input } from "../../../components/ui/input";
-import useTokens from "../../../hooks/useTokens";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../../../components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "../../../components/ui/popover";
+import useTokens from "../../../hooks/useTokens";
 import { cn } from "../../../lib/utils";
-import { format } from "date-fns";
+import { Label } from "../../../components/ui/label";
 
 const needAtLeast = (characters: number, field: string) =>
   `Need at least ${characters} characters for the ${field}`;
 
+type CreationState = "waiting_for_input" | "creating" | "success" | "error";
+
 const NewTask = () => {
   const [jwtToken, refreshToken] = useTokens();
+  const [creationState, setCreationState] =
+    useState<CreationState>("waiting_for_input");
 
   const newTaskFormSchema = z.object({
     due_until: z.date({ required_error: "Due date is required." }),
@@ -56,22 +62,30 @@ const NewTask = () => {
   });
 
   const onSubmit = async () => {
+    setCreationState("creating");
+
     try {
       const { due_until, title, description, priority, category } =
         form.getValues();
       const taskBody = {
-        due_until: due_until.toUTCString(),
+        due_until: formatRFC3339(due_until),
         title,
         description,
         priority,
         category,
       };
 
-      const task = await postTask(jwtToken, refreshToken, taskBody, () =>
-        toast.error("Something went wrong while creating your task...")
-      );
-      console.log(task);
+      const task = await postTask(jwtToken, refreshToken, taskBody, () => {
+        setCreationState("error");
+        toast.error("Something went wrong while creating your task...");
+      });
+
+      if (task != undefined) {
+        setCreationState("success");
+        task && toast.success("Task created successfully!");
+      }
     } catch (e) {
+      setCreationState("error");
       toast.error("Something went wrong...");
       console.error(e);
     }
@@ -190,13 +204,30 @@ const NewTask = () => {
                   </FormItem>
                 )}
               />
-              <div className="flex justify-end">
-                <Button type="submit">Create</Button>
+              <div className="flex flex-col items-end justify-end">
+                <Button
+                  type="submit"
+                  {...(creationState == "creating" && { disabled: true })}
+                >
+                  Create
+                </Button>
               </div>
             </form>
           </Form>
         </CardContent>
       </Card>
+      <div className="w-2/3 mt-10 flex justify-start">
+        {creationState == "success" && (
+          <Label className="text-white align-self-start">
+            Your task was created!
+          </Label>
+        )}
+        {creationState == "error" && (
+          <Label className="text-rose-300 align-self-start">
+            Something went wrong while creating your task, please try again.
+          </Label>
+        )}
+      </div>
     </div>
   );
 };

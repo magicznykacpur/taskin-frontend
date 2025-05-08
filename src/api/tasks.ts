@@ -38,8 +38,12 @@ export const postTask = async (
       body: JSON.stringify(taskBody),
     });
 
-    const task: Task = await res.json();
-    return task;
+    if (res.status == 201) {
+      const task: Task = await res.json();
+      return task;
+    } else {
+      onError();
+    }
   } catch (e) {
     console.error(e);
     onError();
