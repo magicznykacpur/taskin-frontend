@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUserInfo, logoutUser } from "../../api/user";
-import menu from "../assets/menu.svg";
+import menu from "../../assets/menu.svg";
 import { userAtom } from "../../atoms/user";
 import { Button } from "../../components/ui/button";
 import {
