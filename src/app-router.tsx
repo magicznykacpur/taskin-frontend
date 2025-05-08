@@ -4,7 +4,7 @@ import Landing from "./pages/landing";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Profile from "./pages/dashboard/profile";
-import NewTask from "./pages/dashboard/tasks/new_task";
+import NewTask from "./pages/dashboard/tasks/new-task";
 import Tasks from "./pages/dashboard/tasks/tasks";
 
 const AppRouter = () => (
