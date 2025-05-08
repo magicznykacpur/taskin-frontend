@@ -80,6 +80,13 @@ const Dashboard = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
+                className="justify-center"
+                onClick={() => navigate("/dashboard/new-task")}
+              >
+                New task
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
                 variant="destructive"
                 className="justify-center"
                 onClick={() => logout()}

@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { postTask } from "../../../api/tasks";
-import useTokens from "../../../hooks/useTokens";
-import { toast } from "sonner";
+import { Button } from "../../../components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,25 +11,36 @@ import {
   CardTitle,
 } from "../../../components/ui/card";
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "../../../components/ui/form";
 import { Input } from "../../../components/ui/input";
-import { Button } from "../../../components/ui/button";
+import useTokens from "../../../hooks/useTokens";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "../../../components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../../components/ui/popover";
+import { cn } from "../../../lib/utils";
+import { format } from "date-fns";
 
 const needAtLeast = (characters: number, field: string) =>
-  `Need at least ${characters} for the ${field}`;
+  `Need at least ${characters} characters for the ${field}`;
 
 const NewTask = () => {
   const [jwtToken, refreshToken] = useTokens();
 
   const newTaskFormSchema = z.object({
-    due_until: z.date(),
+    due_until: z.date({ required_error: "Due date is required." }),
     title: z.string().min(3, needAtLeast(3, "title")),
     description: z.string().min(3, needAtLeast(3, "description")),
-    priority: z.number().min(1, "Must be at least 1."),
+    priority: z.number().min(0, "Must be at least 0."),
     category: z.string().min(3, needAtLeast(3, "category")),
   });
 
@@ -39,7 +50,7 @@ const NewTask = () => {
       due_until: new Date(),
       title: "",
       description: "",
-      priority: 1,
+      priority: 0,
       category: "",
     },
   });
@@ -68,9 +79,9 @@ const NewTask = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <Card className="mt-10 w-1/2">
+      <Card className="mt-10 w-2/3">
         <CardHeader>
-          <CardTitle>Log in to Taskin</CardTitle>
+          <CardTitle>Create new task</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -82,8 +93,41 @@ const NewTask = () => {
                 control={form.control}
                 name="due_until"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormControl>{/* <Input {...field} /> */}</FormControl>
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Due until</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => {
+                            const yesterday = new Date();
+                            yesterday.setDate(new Date().getDate() - 1);
+                            return date < yesterday;
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -93,8 +137,9 @@ const NewTask = () => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="title" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,8 +150,9 @@ const NewTask = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="description" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,8 +163,9 @@ const NewTask = () => {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <Input placeholder="category" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,15 +176,22 @@ const NewTask = () => {
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Priority</FormLabel>
                     <FormControl>
-                      <Input placeholder="priority" type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <div className="flex justify-end">
-                <Button type="submit">Log in</Button>
+                <Button type="submit">Create</Button>
               </div>
             </form>
           </Form>

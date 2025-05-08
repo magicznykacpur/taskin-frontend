@@ -22,6 +22,8 @@ const Tasks = () => {
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  return <></>
 };
 
 export default Tasks;

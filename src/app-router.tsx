@@ -4,6 +4,8 @@ import Landing from "./pages/landing";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Profile from "./pages/dashboard/profile";
+import NewTask from "./pages/dashboard/tasks/new_task";
+import Tasks from "./pages/dashboard/tasks/tasks";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -13,7 +15,9 @@ const AppRouter = () => (
       <Route path="signup" element={<Signup />} />
       <Route path="dashboard" element={<Dashboard />}>
         <Route path="profile" element={<Profile />} />
-        <Route path="tasks" />
+        <Route path="tasks" element={<Tasks />} />
+        <Route path="new-task" element={<NewTask />} />
+        <Route path="update-task" />
       </Route>
     </Routes>
   </BrowserRouter>
