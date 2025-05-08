@@ -1,15 +1,13 @@
 import { useAtom } from "jotai";
 import { useEffect } from "react";
-import { useCookies } from "react-cookie";
 import { toast } from "sonner";
 import { getTasks } from "../../../api/tasks";
 import { tasksAtom } from "../../../atoms/tasks";
+import useTokens from "../../../hooks/useTokens";
 
 const Tasks = () => {
   const [tasks, setTasks] = useAtom(tasksAtom);
-  const [cookies] = useCookies();
-  const jwtToken = cookies["jwt_token"];
-  const refreshToken = cookies["refresh_token"];
+  const [jwtToken, refreshToken] = useTokens();
 
   const fetchTasks = async () => {
     const data = await getTasks(jwtToken, refreshToken, () =>
@@ -23,7 +21,7 @@ const Tasks = () => {
     fetchTasks();
   }, []);
 
-  return <></>
+  return <></>;
 };
 
 export default Tasks;

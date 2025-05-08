@@ -1,7 +1,5 @@
-import {} from "@radix-ui/react-dropdown-menu";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
-import { useCookies } from "react-cookie";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getUserInfo, logoutUser } from "../../api/user";
@@ -15,12 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
+import useTokens from "../../hooks/useTokens";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [cookie, _, removeCookie] = useCookies();
-  const jwtToken = cookie["jwt_token"];
-  const refreshToken = cookie["refresh_token"];
+  const [jwtToken, refreshToken, removeCookie] = useTokens();
 
   const logout = async () => {
     const status = await logoutUser(jwtToken, refreshToken, () =>

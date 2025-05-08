@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom } from "jotai";
-import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { updateUserInfo } from "../../api/user";
+import { userAtom } from "../../atoms/user";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -22,13 +22,11 @@ import {
   FormMessage,
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
-import { userAtom } from "../../atoms/user";
+import useTokens from "../../hooks/useTokens";
 
 const Profile = () => {
-  const [cookie] = useCookies();
   const [userInfo, setUserInfo] = useAtom(userAtom);
-  const jwtToken = cookie["jwt_token"];
-  const refreshToken = cookie["refresh_token"];
+  const [jwtToken, refreshToken] = useTokens();
 
   const updateProfileFormSchema = z.object({
     email: z.string().email("This is not a valid email.").or(z.undefined()),
