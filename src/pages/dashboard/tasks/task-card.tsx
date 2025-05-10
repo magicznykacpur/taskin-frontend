@@ -10,7 +10,7 @@ import { Task } from "../../../types";
 import { formatDate } from "date-fns";
 import useTokens from "../../../hooks/useTokens";
 import { deleteTask } from "../../../api/tasks";
-import { useRef, useState } from "react";
+import { MouseEventHandler, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   Popover,
@@ -21,10 +21,12 @@ import { Button } from "../../../components/ui/button";
 import useOnClickOustide from "../../../hooks/useOnClickOutside";
 import { useAtom } from "jotai";
 import { tasksAtom } from "../../../atoms/tasks";
+import { useNavigate } from "react-router";
 
 type DeleteTaskStatus = "idle" | "deleting" | "success" | "error";
 
 const TaskCard = ({ id, title, description, due_until }: Task) => {
+  const navigate = useNavigate();
   const [deleteStatus, setDeleteStatus] = useState<DeleteTaskStatus>("idle");
 
   const [deletePopoverOpen, setDeletePopoverOpen] = useState<boolean>(false);
@@ -34,8 +36,10 @@ const TaskCard = ({ id, title, description, due_until }: Task) => {
   const [jwtToken, refreshToken] = useTokens();
   const formattedDate = formatDate(due_until, "dd-MM-yyyy");
 
-  const handleXClick = () => {
+  const handleXClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     if (deleteStatus !== "deleting") {
+      event.preventDefault()
+      event.stopPropagation()
       setDeletePopoverOpen(true);
     }
   };
@@ -61,7 +65,8 @@ const TaskCard = ({ id, title, description, due_until }: Task) => {
 
   return (
     <Card
-      className={deleteStatus === "deleting" ? "bg-accent animate-pulse" : ""}
+      onClick={() => navigate(`/dashboard/update-task/${id}`)}
+      className={deleteStatus === "deleting" ? "bg-accent animate-pulse" : "cursor-pointer"}
     >
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
@@ -69,7 +74,7 @@ const TaskCard = ({ id, title, description, due_until }: Task) => {
           <Popover open={deletePopoverOpen}>
             <PopoverTrigger asChild>
               <X
-                onClick={() => handleXClick()}
+                onClick={(event) => handleXClick(event)}
                 color="#F8A1AD"
                 size={24}
                 strokeWidth="4px"

@@ -30,3 +30,11 @@ export type CreateTaskReq = {
   category: string;
   due_until: string;
 };
+
+export type UpdateTaskReq = {
+  title?: string;
+  description?: string;
+  priority?: number;
+  category?: string;
+  due_until?: string;
+};

@@ -6,6 +6,7 @@ import Signup from "./pages/signup";
 import Profile from "./pages/dashboard/profile";
 import NewTask from "./pages/dashboard/tasks/new-task";
 import Tasks from "./pages/dashboard/tasks/tasks";
+import UpdateTask from "./pages/dashboard/tasks/update-task";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -17,7 +18,7 @@ const AppRouter = () => (
         <Route path="profile" element={<Profile />} />
         <Route path="tasks" element={<Tasks />} />
         <Route path="new-task" element={<NewTask />} />
-        <Route path="update-task" />
+        <Route path="update-task/:id" element={<UpdateTask />} />
       </Route>
     </Routes>
   </BrowserRouter>

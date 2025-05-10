@@ -31,16 +31,13 @@ import {
 import useTokens from "../../../hooks/useTokens";
 import { cn } from "../../../lib/utils";
 import { Label } from "../../../components/ui/label";
-
-const needAtLeast = (characters: number, field: string) =>
-  `Need at least ${characters} characters for the ${field}`;
+import { needAtLeast } from "../../../helpers/form";
 
 type CreationStatus = "idle" | "creating" | "success" | "error";
 
 const NewTask = () => {
   const [jwtToken, refreshToken] = useTokens();
-  const [creationStatus, setCreationStatus] =
-    useState<CreationStatus>("idle");
+  const [creationStatus, setCreationStatus] = useState<CreationStatus>("idle");
 
   const newTaskFormSchema = z.object({
     due_until: z.date({ required_error: "Due date is required." }),

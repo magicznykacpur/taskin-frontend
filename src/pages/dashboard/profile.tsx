@@ -64,6 +64,7 @@ const Profile = () => {
       username === undefined &&
       password === undefined
     ) {
+      setUpdateStatus("idle")
       toast.warning("You must pass at least one value to update.");
       return;
     }
