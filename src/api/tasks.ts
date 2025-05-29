@@ -130,3 +130,33 @@ export const getTaskById = async (
     onError();
   }
 };
+
+export const getSearchTasks = async (
+  jwtToken: string,
+  refreshToken: string,
+  searchString: string,
+  onError: () => void
+): Promise<Task[] | void> => {
+  try {
+    const res = await fetch(
+      `/api/tasks/search?title=${searchString}&description=${searchString}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          RefreshToken: refreshToken,
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      const tasks: Task[] = await res.json();
+      return tasks;
+    } else {
+      onError();
+    }
+  } catch (e) {
+    console.error(e);
+    onError();
+  }
+};
